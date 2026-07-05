@@ -1,6 +1,6 @@
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
-import Markdown from 'unplugin-vue-markdown/vite'
+import Markdown from 'vite-plugin-md'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -17,31 +17,7 @@ export default defineConfig(({ mode }) => {
         },
         plugins: [
             vue({ include: [/\.vue$/, /\.md$/] }),
-            Markdown({
-                exportFrontmatter: true,
-                markdownOptions: {
-                    html: true,
-                    linkify: true,
-                    typographer: true,
-                },
-                markdownSetup(md) {
-                    const defaultImageRenderer = md.renderer.rules.image || function (tokens, idx, options, _env, self) {
-                        return self.renderToken(tokens, idx, options)
-                    }
-
-                    md.renderer.rules.image = function (tokens, idx, options, _env, self) {
-                        const token = tokens[idx]
-                        const srcAttr = token.attrIndex('src')
-                        if (srcAttr >= 0 && token.attrs) {
-                            const src = token.attrs[srcAttr][1]
-                            if (src.startsWith('assets/images/')) {
-                                token.attrs[srcAttr][1] = postAddress + src
-                            }
-                        }
-                        return defaultImageRenderer(tokens, idx, options, _env, self)
-                    }
-                },
-            }),
+            Markdown(),
         ],
     }
 })

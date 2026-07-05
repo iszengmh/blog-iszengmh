@@ -8,7 +8,7 @@ defineOptions({ name: 'ArticleList' })
 import ArticleCard from './ArticleCard.vue'
 import type { Article } from './ArticleCard.vue'
 
-interface Props {
+export interface Props {
   /** 文章列表 */
   articles?: Article[]
   /** 是否正在加载 */
