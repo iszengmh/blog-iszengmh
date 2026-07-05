@@ -1,5 +1,5 @@
 import type { Article } from '../components/article/ArticleCard.vue'
-import { postAddress } from '../config.ts'
+import {markdownImageSuffix, postAddress} from '../config.ts'
 
 /** 文章元数据 */
 export interface ArticleMeta {
@@ -77,13 +77,13 @@ function resolveImagePath(path: string | string[] | undefined): string | string[
 
   if (Array.isArray(path)) {
     return path.map((p) =>
-        typeof p === 'string' && p.startsWith('assets/images/')
+        typeof p === 'string' && p.startsWith(markdownImageSuffix)
             ? postAddress + p
             : p,
     )
   }
 
-  if (path.startsWith('assets/images/')) {
+  if (path.startsWith(markdownImageSuffix)) {
     return postAddress + path
   }
   return path
