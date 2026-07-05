@@ -107,7 +107,10 @@ export function useArticles() {
 
   const articles: ArticleMeta[] = Object.entries(rawModules)
       .map(([filepath, raw]) => {
-        const id = filepath.split('/').pop()?.replace(/\.md$/, '') ?? ''
+        const id = filepath
+            .split('/')
+            .pop()
+            ?.replace(/\.md$/, '')?? ''
         const frontmatter = parseFrontmatter(raw)
 
         return {

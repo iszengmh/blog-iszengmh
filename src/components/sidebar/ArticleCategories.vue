@@ -19,13 +19,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  categories: () => [
-    { key: 'frontend', label: '前端开发', count: 12 },
-    { key: 'backend', label: '后端开发', count: 8 },
-    { key: 'devops', label: '运维部署', count: 5 },
-    { key: 'design', label: '设计教程', count: 3 },
-    { key: 'life', label: '生活随笔', count: 7 },
-  ],
+  categories: () => [],
   activeCategory: '',
 })
 

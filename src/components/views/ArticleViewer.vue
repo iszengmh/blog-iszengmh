@@ -23,7 +23,7 @@ async function loadArticle(id: string) {
   loading.value = true
   error.value = ''
   html.value = ''
-
+  console.log("loadArticle",id)
   try {
     const mod = await import(`../../posts/${id}.md?raw`)
     const raw = mod.default as string
@@ -37,9 +37,11 @@ async function loadArticle(id: string) {
   }
 }
 
-watch(() => props.id, (id) => {
-  if (id) loadArticle(id)
-}, { immediate: true })
+watch(()=>props.id, (id) => {
+    if (id) loadArticle(id)
+  },
+    { immediate: true }
+)
 </script>
 
 <template>
@@ -50,7 +52,7 @@ watch(() => props.id, (id) => {
 
     <a-result v-else-if="error" status="error" title="加载失败" :sub-title="error">
       <template #extra>
-        <a-button @click="loadArticle(props.id)">重试</a-button>
+        <a-button @click="loadArticle(id)">重试</a-button>
       </template>
     </a-result>
 

@@ -30,7 +30,6 @@ const showArticleList = computed(() => !activeArticleId.value)
 watch(() => route.path, (path) => {
   // 去掉开头的 /，剩下的就是文章 ID
   const id = path.slice(1)
-  console.log(id)
   activeArticleId.value = id || null
 }, { immediate: true })
 
@@ -39,6 +38,16 @@ const pageSize = ref(10)
 const activeCategory = ref('')
 const activeTag = ref('')
 
+const categories = computed(() => {
+  const countMap: Record<string, Category> = {}
+  articleCards.value.forEach(item => {
+    const cat = item.category
+    if (cat) {
+      countMap[cat] = {key:cat,label:cat,count:((countMap[cat]?.count || 0) + 1)}
+    }
+  })
+  return Object.values(countMap)
+})
 const filteredArticles = computed(() => {
   let list = articleCards.value
   if (activeCategory.value) {
@@ -61,7 +70,7 @@ function handlePageChange(page: number) {
 }
 
 function handleCategorySelect(category: Category) {
-  activeCategory.value = category.key
+  activeCategory.value = category.label
   activeTag.value = ''
   currentPage.value = 1
 }
@@ -114,6 +123,7 @@ function handleArticleClick(article: Article) {
         ]"
       />
       <ArticleCategories
+          :categories="categories"
         :activeCategory="activeCategory"
         @select="handleCategorySelect"
       />
