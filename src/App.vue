@@ -24,7 +24,7 @@ const { articles: allArticles, toArticleCard } = useArticles()
 
 // 直接转换为 ArticleCard 可用的格式
 const articleCards = computed<Article[]>(() =>
-  allArticles.map((meta) => toArticleCard(meta)),
+    allArticles.map((meta) => toArticleCard(meta)),
 )
 
 /* ---------- 状态管理 ---------- */
@@ -89,14 +89,14 @@ const handleArticleClick = (article: Article) => {
     <!-- ====== Header ====== -->
     <template #header>
       <BlogHeader
-        title="iszengmh 的博客"
-        active-key="home"
-        @menu-click="(item) => console.log('导航:', item)"
+          title="iszengmh 的博客"
+          active-key="home"
+          @menu-click="(item) => console.log('导航:', item)"
       >
         <template #right>
           <a-input-search
-            placeholder="搜索文章..."
-            style="width: 200px"
+              placeholder="搜索文章..."
+              style="width: 200px"
           />
         </template>
       </BlogHeader>
@@ -105,44 +105,44 @@ const handleArticleClick = (article: Article) => {
     <!-- ====== 侧边栏 ====== -->
     <template #sidebar>
       <AuthorAvatar
-        avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=iszengmh"
-        name="iszengmh"
-        bio="全栈工程师 / 开源爱好者"
-        :socialLinks="[
+          avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=iszengmh"
+          name="iszengmh"
+          bio="全栈工程师 / 开源爱好者"
+          :socialLinks="[
           { icon: 'GithubOutlined', url: 'https://github.com', label: 'GitHub' },
           { icon: 'WechatOutlined', url: '#', label: '微信' },
           { icon: 'MailOutlined', url: 'mailto:iszengmh@example.com', label: '邮箱' },
         ]"
       />
       <ArticleCategories
-        :activeCategory="activeCategory"
-        @select="handleCategorySelect"
+          :activeCategory="activeCategory"
+          @select="handleCategorySelect"
       />
       <ArticleTags
-        :activeTag="activeTag"
-        @select="handleTagSelect"
+          :activeTag="activeTag"
+          @select="handleTagSelect"
       />
     </template>
 
     <!-- ====== 文章列表 ====== -->
     <ArticleList
-      :articles="pagedArticles"
-      :loading="loading"
-      :pagination="{
+        :articles="pagedArticles"
+        :loading="loading"
+        :pagination="{
         current: currentPage,
         pageSize: pageSize,
         total: totalArticles,
       }"
-      @article-click="handleArticleClick"
-      @page-change="handlePageChange"
+        @article-click="handleArticleClick"
+        @page-change="handlePageChange"
     />
 
     <!-- ====== Footer ====== -->
     <template #footer>
       <BlogFooter
-        site-name="iszengmh 的博客"
-        :year="2026"
-        :extra="['用 ❤️ 和 Vue 构建']"
+          site-name="iszengmh 的博客"
+          :year="2026"
+          :extra="['用 ❤️ 和 Vue 构建']"
       />
     </template>
   </BlogLayout>

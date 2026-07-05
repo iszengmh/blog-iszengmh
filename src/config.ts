@@ -7,5 +7,5 @@
  * 生产环境：图片部署在 https://iszengmh.pages.dev/posts/ 下。
  */
 export const postAddress = import.meta.env.DEV
-  ? '/src/posts/'
-  : import.meta.env.VITE_WEB_ADDRESS + 'posts/'
+    ? '/src/posts/'
+    : import.meta.env.VITE_WEB_ADDRESS + 'posts/'

@@ -42,7 +42,6 @@ const emit = defineEmits<{
 /** 判断是否需要分页（外部有 pagination 时使用 Ant Design 分页） */
 const usePagination = props.pagination !== undefined
 
-/** 分页变化时触发，用函数包裹确保 pagination 不为空 */
 function onPageChange(page: number) {
   if (props.pagination) {
     emit('page-change', page, props.pagination.pageSize)
