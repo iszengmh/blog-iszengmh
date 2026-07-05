@@ -6,7 +6,7 @@
  *
  * 生产环境：图片部署在 https://iszengmh.pages.dev/posts/ 下。
  */
-export const postAddress = import.meta.env.VITE_WEB_ADDRESS + 'posts/';
+export const postAddress = import.meta.env.DEV?'/src/posts/':import.meta.env.VITE_WEB_ADDRESS + 'posts/';
 
 /*
 markdown本地地址的相对路径，例如你的图片地址是![](assets/images/2025-09-15-12-00-37.png)，
