@@ -6,7 +6,7 @@
 defineOptions({ name: 'AuthorAvatar' })
 
 import { GithubOutlined, WechatOutlined, MailOutlined } from '@ant-design/icons-vue'
-import { h } from 'vue'
+
 
 interface SocialLink {
   /** 图标组件名称 */
