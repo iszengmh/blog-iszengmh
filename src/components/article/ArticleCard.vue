@@ -121,7 +121,7 @@ const emit = defineEmits<{
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-align: center;
+  /*text-align: center;*/
 }
 
 .article-meta {
