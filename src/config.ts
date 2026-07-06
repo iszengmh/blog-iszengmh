@@ -13,3 +13,20 @@ markdown本地地址的相对路径，例如你的图片地址是![](assets/imag
 那就设置“assets/images/”为地址，build完之后，会生成完整的web地址
 * */
 export const markdownImageSuffix="assets/images/";
+
+export const assetsAddress = import.meta.env.DEV?'/src/assets/':import.meta.env.VITE_WEB_ADDRESS + 'assets/';
+export const profile={
+    avatar: `${assetsAddress}/avatar.svg`,
+        name: 'Rise Zeng',
+    bio: '一分技术一分生活',
+    socialLinks: () => [
+            { icon: 'GithubOutlined', url: 'https://github.com/iszengmh', label: 'GitHub' },
+            // { icon: 'WechatOutlined', url: '#', label: '微信' },
+            // { icon: 'MailOutlined', url: 'mailto:blog@example.com', label: '邮箱' },
+    ],
+}
+export const menuItems=[
+    { key: 'home', label: '首页', path: '/' },
+    { key: 'archives', label: '归档', path: '/archives'},
+    { key: 'about', label: '关于', path: '/about' },
+]

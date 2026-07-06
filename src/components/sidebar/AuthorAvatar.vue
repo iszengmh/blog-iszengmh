@@ -1,8 +1,9 @@
-<script setup lang="ts">
-/**
+<script setup lang="ts">/**
  * 博主头像卡片组件
  * 展示博主头像、姓名、简介和社交链接
  */
+import {profile} from "../../config.ts";
+
 defineOptions({ name: 'AuthorAvatar' })
 
 import { GithubOutlined, WechatOutlined, MailOutlined } from '@ant-design/icons-vue'
@@ -22,16 +23,8 @@ interface Props {
   socialLinks?: SocialLink[]
 }
 
-withDefaults(defineProps<Props>(), {
-  avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=blogger',
-  name: '博主名称',
-  bio: '热爱技术，分享生活。专注于 Web 开发与前端工程化。',
-  socialLinks: () => [
-    { icon: 'GithubOutlined', url: 'https://github.com', label: 'GitHub' },
-    { icon: 'WechatOutlined', url: '#', label: '微信' },
-    { icon: 'MailOutlined', url: 'mailto:blog@example.com', label: '邮箱' },
-  ],
-})
+const props=withDefaults(defineProps<Props>(), profile)
+
 
 /** 图标字符串到组件引用的映射 */
 const iconMap: Record<string, any> = {
@@ -39,12 +32,13 @@ const iconMap: Record<string, any> = {
   WechatOutlined,
   MailOutlined,
 }
+console.log(props.socialLinks)
 </script>
 
 <template>
   <a-card :bordered="false" class="author-card">
     <div class="author-info">
-      <a-avatar :src="avatar" :size="80" class="author-avatar" />
+      <a-avatar :src="avatar" :size="100" class="author-avatar" />
       <h3 class="author-name">{{ name }}</h3>
       <p class="author-bio">{{ bio }}</p>
       <div class="social-links">

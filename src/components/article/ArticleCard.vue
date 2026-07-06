@@ -14,6 +14,7 @@ export interface Article {
   cover?: string
   views?: number
   likes?: number
+  draft:boolean | undefined
 }
 
 interface Props {
@@ -42,7 +43,7 @@ const emit = defineEmits<{
         <div class="article-meta">
           <span class="meta-item">
             <CalendarOutlined />
-            {{ article.date }}
+            {{ article.date.slice(0,10) }}
           </span>
           <span v-if="article.views" class="meta-item">
             <EyeOutlined />

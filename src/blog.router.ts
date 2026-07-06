@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import Archives from './components/Archives.vue'
+import About from './components/About.vue'
 
 // 页面路由（.vue 文件，放在 src/pages）
 const vuePages = import.meta.glob('/src/components/**/*.vue')
-console.log("vuePages",vuePages)
 const vueRoutes = Object.keys(vuePages).map((path) => {
   const routePath = path.replace('/src/components/', '/')
       .replace('.vue', '')
@@ -10,9 +11,10 @@ const vueRoutes = Object.keys(vuePages).map((path) => {
 })
 
 const routes = [
-  // 博客页面由 App.vue 根据 route.params.id 直接控制显示，
-  // 不需要在此定义路由。
   ...vueRoutes,
+  // 非首页的菜单路由（首页 / 由 App.vue 直接处理，不需路由定义）
+  { path: '/archives', component: Archives,props: { isMenu: true }},
+  { path: '/about', component: About,props: { isMenu: true, }},
 ]
 console.log("routes",routes)
 export const blogRouter = createRouter({

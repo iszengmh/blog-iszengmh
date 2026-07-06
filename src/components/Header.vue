@@ -26,11 +26,7 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   title: 'My Blog',
-  menuItems: () => [
-    { key: 'home', label: '首页', path: '/' },
-    { key: 'archives', label: '归档', path: '/archives' },
-    { key: 'about', label: '关于', path: '/about' },
-  ],
+  menuItems: () => [],
   activeKey: 'home',
 })
 

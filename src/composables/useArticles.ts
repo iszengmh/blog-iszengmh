@@ -145,6 +145,7 @@ export function useArticles() {
       tags: meta.tags,
       date: meta.published,
       cover: meta.cover,
+      draft:meta.draft
     }
   }
 

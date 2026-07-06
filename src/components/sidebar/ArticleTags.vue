@@ -1,8 +1,9 @@
-<script setup lang="ts">
-/**
+<script setup lang="ts">/**
  * 文章标签云组件
  * 展示所有文章标签，支持点击筛选
  */
+import {computed, ref} from "vue";
+
 defineOptions({ name: 'ArticleTags' })
 
 export interface Tag {
@@ -17,21 +18,14 @@ interface Props {
   tags?: Tag[]
   /** 当前选中的标签 */
   activeTag?: string
+  /** 超出此数量时折叠 */
+  limit?: number
 }
 
-withDefaults(defineProps<Props>(), {
-  tags: () => [
-    { key: 'vue', label: 'Vue.js', weight: 5 },
-    { key: 'react', label: 'React', weight: 4 },
-    { key: 'ts', label: 'TypeScript', weight: 4 },
-    { key: 'node', label: 'Node.js', weight: 3 },
-    { key: 'css', label: 'CSS', weight: 3 },
-    { key: 'docker', label: 'Docker', weight: 2 },
-    { key: 'git', label: 'Git', weight: 2 },
-    { key: 'rust', label: 'Rust', weight: 1 },
-    { key: 'ai', label: 'AI', weight: 1 },
-  ],
+const props=withDefaults(defineProps<Props>(), {
+  tags: () => [],
   activeTag: '',
+  limit: 10,
 })
 
 const emit = defineEmits<{
@@ -46,13 +40,30 @@ const fontSizeMap: Record<number, string> = {
   4: '16px',
   5: '18px',
 }
+
+const expanded = ref(false)
+
+/** 是否折叠（分类数超过 limit 且未展开） */
+const isCollapsible = computed(() => props.tags.length > props.limit)
+
+/** 实际显示的列表 */
+const visibleTags = computed(() => {
+  if (expanded.value || !isCollapsible.value) {
+    return props.tags
+  }
+  return props.tags.slice(0, props.limit)
+})
+
+function toggle() {
+  expanded.value = !expanded.value
+}
 </script>
 
 <template>
   <a-card :bordered="false" class="tags-card" title="标签云">
     <div class="tags-cloud">
       <a-tag
-        v-for="tag in tags"
+        v-for="tag in visibleTags"
         :key="tag.key"
         :class="{ 'tag-active': tag.key === activeTag }"
         :style="{ fontSize: fontSizeMap[tag.weight ?? 1] }"
@@ -61,6 +72,16 @@ const fontSizeMap: Record<number, string> = {
         {{ tag.label }}
       </a-tag>
     </div>
+    <!-- 展开/收起按钮 -->
+    <a-button
+        v-if="isCollapsible"
+        type="link"
+        size="small"
+        class="toggle-btn"
+        @click="toggle"
+    >
+      {{ expanded ? '收起 ▲' : `显示更多 (${tags.length - props.limit}) ▼` }}
+    </a-button>
   </a-card>
 </template>
 

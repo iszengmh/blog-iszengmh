@@ -13,6 +13,7 @@ import ArticleList from './components/article/ArticleList.vue'
 import type { Article } from './components/article/ArticleCard.vue'
 import ArticleViewer from './components/views/ArticleViewer.vue'
 import { useArticles } from './composables/useArticles'
+import {menuItems} from "./config.ts";
 
 const route = useRoute()
 const router = useRouter()
@@ -48,6 +49,20 @@ const categories = computed(() => {
   })
   return Object.values(countMap)
 })
+
+const tags = computed(() => {
+  const tagMap: Record<string, Category> = {}
+  articleCards.value.forEach(item => {
+    item.tags?.forEach((tag)=>{
+      if (tag) {
+        tagMap[tag] = {key:tag,label:tag,count:((tagMap[tag]?.count || 0) + 1)}
+      }
+    })
+  })
+  return Object.values(tagMap)
+})
+
+
 const filteredArticles = computed(() => {
   let list = articleCards.value
   if (activeCategory.value) {
@@ -84,6 +99,10 @@ function handleTagSelect(tag: Tag) {
 function handleArticleClick(article: Article) {
   router.push(`/${article.id}`)
 }
+
+function handleMenuClick(item: any){
+  router.go(item.path)
+}
 </script>
 
 <template>
@@ -91,8 +110,9 @@ function handleArticleClick(article: Article) {
     <template #header>
       <BlogHeader
         title="iszengmh 的博客"
+        :menuItems="menuItems"
         :active-key="showArticleList ? 'home' : route.path"
-        @menu-click="(item: any) => console.log('导航:', item)"
+        @menu-click="handleMenuClick"
       >
         <template #right>
           <a-button
@@ -113,14 +133,6 @@ function handleArticleClick(article: Article) {
 
     <template #sidebar>
       <AuthorAvatar
-        avatar="https://api.dicebear.com/7.x/avataaars/svg?seed=iszengmh"
-        name="iszengmh"
-        bio="全栈工程师 / 开源爱好者"
-        :socialLinks="[
-          { icon: 'GithubOutlined', url: 'https://github.com', label: 'GitHub' },
-          { icon: 'WechatOutlined', url: '#', label: '微信' },
-          { icon: 'MailOutlined', url: 'mailto:iszengmh@example.com', label: '邮箱' },
-        ]"
       />
       <ArticleCategories
           :categories="categories"
@@ -128,6 +140,7 @@ function handleArticleClick(article: Article) {
         @select="handleCategorySelect"
       />
       <ArticleTags
+          :tags="tags"
         :activeTag="activeTag"
         @select="handleTagSelect"
       />
@@ -145,11 +158,11 @@ function handleArticleClick(article: Article) {
       @article-click="handleArticleClick"
       @page-change="handlePageChange"
     />
-
     <ArticleViewer
       v-else
       :id="activeArticleId!"
     />
+
 
     <template #footer>
       <BlogFooter
