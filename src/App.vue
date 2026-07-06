@@ -12,8 +12,10 @@ import type { Tag } from './components/sidebar/ArticleTags.vue'
 import ArticleList from './components/article/ArticleList.vue'
 import type { Article } from './components/article/ArticleCard.vue'
 import ArticleViewer from './components/views/ArticleViewer.vue'
+import Archives from './components/Archives.vue'
+import About from './components/About.vue'
 import { useArticles } from './composables/useArticles'
-import {menuItems} from "./config.ts";
+import { menuItems } from './config.ts'
 
 const route = useRoute()
 const router = useRouter()
@@ -23,16 +25,29 @@ const articleCards = computed<Article[]>(() =>
   allArticles.map((meta) => toArticleCard(meta)),
 )
 
-/** 当前选中的文章 ID（从 URL 路径中提取） */
-const activeArticleId = ref<string | null>(null)
-const showArticleList = computed(() => !activeArticleId.value)
+/** 不需要当作文章 ID 处理的系统路径 */
+const SYSTEM_ROUTES = ['/archives', '/about']
 
-// 监听路由变化，从 URL 中提取文章 ID
-watch(() => route.path, (path) => {
-  // 去掉开头的 /，剩下的就是文章 ID
-  const id = path.slice(1)
-  activeArticleId.value = id || null
-}, { immediate: true })
+/** 当前路由类型 */
+const pageType = computed(() => {
+  const path = route.path
+  if (path === '/') return 'home'
+  if (SYSTEM_ROUTES.includes(path)) return path.slice(1) // 'archives' | 'about'
+  return 'article' // 其他路径当作文章 ID
+})
+
+/** 文章 ID（仅在 pageType === 'article' 时有值） */
+const activeArticleId = computed(() => {
+  if (pageType.value === 'article') return route.path.slice(1)
+  return null
+})
+
+watch(() => route.path, () => {
+  // 切换页面时重置分类/标签筛选
+  activeCategory.value = ''
+  activeTag.value = ''
+  currentPage.value = 1
+})
 
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -44,7 +59,7 @@ const categories = computed(() => {
   articleCards.value.forEach(item => {
     const cat = item.category
     if (cat) {
-      countMap[cat] = {key:cat,label:cat,count:((countMap[cat]?.count || 0) + 1)}
+      countMap[cat] = { key: cat, label: cat, count: ((countMap[cat]?.count || 0) + 1) }
     }
   })
   return Object.values(countMap)
@@ -53,15 +68,14 @@ const categories = computed(() => {
 const tags = computed(() => {
   const tagMap: Record<string, Category> = {}
   articleCards.value.forEach(item => {
-    item.tags?.forEach((tag)=>{
+    item.tags?.forEach((tag) => {
       if (tag) {
-        tagMap[tag] = {key:tag,label:tag,count:((tagMap[tag]?.count || 0) + 1)}
+        tagMap[tag] = { key: tag, label: tag, count: ((tagMap[tag]?.count || 0) + 1) }
       }
     })
   })
   return Object.values(tagMap)
 })
-
 
 const filteredArticles = computed(() => {
   let list = articleCards.value
@@ -100,8 +114,16 @@ function handleArticleClick(article: Article) {
   router.push(`/${article.id}`)
 }
 
-function handleMenuClick(item: any){
-  router.go(item.path)
+function goHome() {
+  router.push('/')
+}
+
+/** 导航栏菜单点击 */
+function handleMenuClick(event: any) {
+  // Ant Design Menu @click 返回 { key, keyPath, item, domEvent }
+  const target = menuItems.find((m) => m.key === event.key)
+  if (!target) return
+  router.push(target.path)
 }
 </script>
 
@@ -110,17 +132,17 @@ function handleMenuClick(item: any){
     <template #header>
       <BlogHeader
         title="iszengmh 的博客"
-        :menuItems="menuItems"
-        :active-key="showArticleList ? 'home' : route.path"
+        :menu-items="menuItems"
+        :active-key="pageType === 'home' ? 'home' : route.path"
         @menu-click="handleMenuClick"
       >
         <template #right>
           <a-button
-            v-if="!showArticleList"
+            v-if="pageType !== 'home'"
             type="link"
-            @click="router.push('/')"
+            @click="goHome"
           >
-            ← 返回列表
+            ← 返回首页
           </a-button>
           <a-input-search
             v-else
@@ -132,22 +154,22 @@ function handleMenuClick(item: any){
     </template>
 
     <template #sidebar>
-      <AuthorAvatar
-      />
+      <AuthorAvatar />
       <ArticleCategories
-          :categories="categories"
-        :activeCategory="activeCategory"
+        :categories="categories"
+        :active-category="activeCategory"
         @select="handleCategorySelect"
       />
       <ArticleTags
-          :tags="tags"
-        :activeTag="activeTag"
+        :tags="tags"
+        :active-tag="activeTag"
         @select="handleTagSelect"
       />
     </template>
 
+    <!-- 内容区：根据路由显示不同页面 -->
     <ArticleList
-      v-if="showArticleList"
+      v-if="pageType === 'home'"
       :articles="pagedArticles"
       :loading="false"
       :pagination="{
@@ -159,10 +181,15 @@ function handleMenuClick(item: any){
       @page-change="handlePageChange"
     />
     <ArticleViewer
-      v-else
+      v-else-if="pageType === 'article'"
       :id="activeArticleId!"
     />
-
+    <Archives
+      v-else-if="pageType === 'archives'"
+      :articles="articleCards"
+      @article-click="handleArticleClick"
+    />
+    <About v-else-if="pageType === 'about'" />
 
     <template #footer>
       <BlogFooter

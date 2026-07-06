@@ -11,10 +11,13 @@ const vueRoutes = Object.keys(vuePages).map((path) => {
 })
 
 const routes = [
+  // 首页 / 由 App.vue 直接渲染内容，路由仅占位用
+  { path: '/', component: { template: '' } },
   ...vueRoutes,
-  // 非首页的菜单路由（首页 / 由 App.vue 直接处理，不需路由定义）
-  { path: '/archives', component: Archives,props: { isMenu: true }},
-  { path: '/about', component: About,props: { isMenu: true, }},
+  { path: '/archives', component: Archives },
+  { path: '/about', component: About },
+  // 文章页 /:id 也由 App.vue 处理，同样加个占位（必须放最后，以免抢在其他路由前面）
+  { path: '/:pathMatch(.*)*', component: { template: '' } },
 ]
 console.log("routes",routes)
 export const blogRouter = createRouter({
