@@ -1,107 +1,37 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import BlogLayout from './components/layout/BlogLayout.vue'
 import BlogHeader from './components/Header.vue'
 import BlogFooter from './components/Footer.vue'
 import AuthorAvatar from './components/sidebar/AuthorAvatar.vue'
 import ArticleCategories from './components/sidebar/ArticleCategories.vue'
-import type { Category } from './components/sidebar/ArticleCategories.vue'
 import ArticleTags from './components/sidebar/ArticleTags.vue'
-import type { Tag } from './components/sidebar/ArticleTags.vue'
-import ArticleList from './components/article/ArticleList.vue'
-import type { Article } from './components/article/ArticleCard.vue'
-import ArticleViewer from './components/views/ArticleViewer.vue'
-import { useArticles } from './composables/useArticles'
-import {menuItems} from "./config.ts";
+import { menuItems, profile } from './config.ts'
+import { useArticleFilter } from './composables/useArticleFilter'
 
-const route = useRoute()
 const router = useRouter()
-const { articles: allArticles, toArticleCard } = useArticles()
+const route = useRoute()
+const {
+  categories,
+  tags,
+  activeCategory,
+  activeTag,
+  handleCategorySelect,
+  handleTagSelect,
+} = useArticleFilter()
 
-const articleCards = computed<Article[]>(() =>
-  allArticles.map((meta) => toArticleCard(meta)),
-)
-
-/** 当前选中的文章 ID（从 URL 路径中提取） */
-const activeArticleId = ref<string | null>(null)
-const showArticleList = computed(() => !activeArticleId.value)
-
-// 监听路由变化，从 URL 中提取文章 ID
-watch(() => route.path, (path) => {
-  // 去掉开头的 /，剩下的就是文章 ID
-  const id = path.slice(1)
-  activeArticleId.value = id || null
-}, { immediate: true })
-
-const currentPage = ref(1)
-const pageSize = ref(10)
-const activeCategory = ref('')
-const activeTag = ref('')
-
-const categories = computed(() => {
-  const countMap: Record<string, Category> = {}
-  articleCards.value.forEach(item => {
-    const cat = item.category
-    if (cat) {
-      countMap[cat] = {key:cat,label:cat,count:((countMap[cat]?.count || 0) + 1)}
-    }
-  })
-  return Object.values(countMap)
+/** 导航栏高亮 key */
+const activeMenuKey = computed(() => {
+  const name = route.name
+  if (name === 'home' || name === 'archives' || name === 'about') return name as string
+  return ''
 })
 
-const tags = computed(() => {
-  const tagMap: Record<string, Category> = {}
-  articleCards.value.forEach(item => {
-    item.tags?.forEach((tag)=>{
-      if (tag) {
-        tagMap[tag] = {key:tag,label:tag,count:((tagMap[tag]?.count || 0) + 1)}
-      }
-    })
-  })
-  return Object.values(tagMap)
-})
-
-
-const filteredArticles = computed(() => {
-  let list = articleCards.value
-  if (activeCategory.value) {
-    list = list.filter((a) => a.category === activeCategory.value)
-  }
-  if (activeTag.value) {
-    list = list.filter((a) => a.tags.includes(activeTag.value))
-  }
-  return list
-})
-
-const totalArticles = computed(() => filteredArticles.value.length)
-const pagedArticles = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  return filteredArticles.value.slice(start, start + pageSize.value)
-})
-
-function handlePageChange(page: number) {
-  currentPage.value = page
-}
-
-function handleCategorySelect(category: Category) {
-  activeCategory.value = category.label
-  activeTag.value = ''
-  currentPage.value = 1
-}
-
-function handleTagSelect(tag: Tag) {
-  activeTag.value = tag.key
-  activeCategory.value = ''
-  currentPage.value = 1
-}
-
-function handleArticleClick(article: Article) {
-  router.push(`/${article.id}`)
-}
-
-function handleMenuClick(item: any){
-  router.go(item.path)
+function handleMenuClick(event: any) {
+  const target = menuItems.find((m) => m.key === event.key)
+  if (!target) return
+  router.push(target.path)
 }
 </script>
 
@@ -109,21 +39,21 @@ function handleMenuClick(item: any){
   <BlogLayout>
     <template #header>
       <BlogHeader
-        title="iszengmh 的博客"
+        :title="profile.name+' 的博客'"
         :menuItems="menuItems"
-        :active-key="showArticleList ? 'home' : route.path"
+        :activeKey="activeMenuKey"
         @menu-click="handleMenuClick"
       >
         <template #right>
           <a-button
-            v-if="!showArticleList"
+            v-if="route.name === 'article'"
             type="link"
             @click="router.push('/')"
           >
             ← 返回列表
           </a-button>
           <a-input-search
-            v-else
+            v-else-if="route.name === 'home'"
             placeholder="搜索文章..."
             style="width: 200px"
           />
@@ -132,41 +62,25 @@ function handleMenuClick(item: any){
     </template>
 
     <template #sidebar>
-      <AuthorAvatar
-      />
+      <AuthorAvatar />
       <ArticleCategories
-          :categories="categories"
+        :categories="categories"
         :activeCategory="activeCategory"
         @select="handleCategorySelect"
       />
       <ArticleTags
-          :tags="tags"
+        :tags="tags"
         :activeTag="activeTag"
         @select="handleTagSelect"
       />
     </template>
 
-    <ArticleList
-      v-if="showArticleList"
-      :articles="pagedArticles"
-      :loading="false"
-      :pagination="{
-        current: currentPage,
-        pageSize: pageSize,
-        total: totalArticles,
-      }"
-      @article-click="handleArticleClick"
-      @page-change="handlePageChange"
-    />
-    <ArticleViewer
-      v-else
-      :id="activeArticleId!"
-    />
-
+    <!-- 路由自动渲染当前页面组件 -->
+    <RouterView />
 
     <template #footer>
       <BlogFooter
-        site-name="iszengmh 的博客"
+        :site-name="profile.name+' 的博客'"
         :year="2026"
         :extra="['用 ❤️ 和 Vue 构建']"
       />

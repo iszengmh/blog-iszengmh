@@ -15,6 +15,8 @@
  ├──────────┴───────────────────┤
  │          Footer              │
  └──────────────────────────────┘
+ *
+ * 移动端：内容优先，sidebar 排在 main 下方
  */
 defineOptions({ name: 'BlogLayout' })
 
@@ -38,8 +40,8 @@ withDefaults(defineProps<Props>(), {
   <a-layout class="blog-layout">
     <!-- 顶部导航栏 -->
     <a-layout-header class="blog-header">
-      <slot name="header">
-        <div class="header-inner">
+      <div class="header-inner" :style="{ maxWidth: contentMaxWidth + 'px' }">
+        <slot name="header">
           <div class="header-left">
             <slot name="header-left">
               <a href="/" class="logo">
@@ -50,13 +52,18 @@ withDefaults(defineProps<Props>(), {
           <div class="header-right">
             <slot name="header-right" />
           </div>
-        </div>
-      </slot>
+        </slot>
+      </div>
     </a-layout-header>
 
     <!-- 主体内容区 -->
     <a-layout-content class="blog-content">
       <div class="content-wrapper" :style="{ maxWidth: contentMaxWidth + 'px' }">
+        <!-- 主内容区（内容优先，DOM 排在 sidebar 前面） -->
+        <main class="blog-main">
+          <slot />
+        </main>
+
         <!-- 侧边栏 -->
         <aside
           v-if="showSidebar"
@@ -65,11 +72,6 @@ withDefaults(defineProps<Props>(), {
         >
           <slot name="sidebar" />
         </aside>
-
-        <!-- 主内容区 -->
-        <main class="blog-main">
-          <slot />
-        </main>
       </div>
     </a-layout-content>
 
@@ -94,24 +96,25 @@ withDefaults(defineProps<Props>(), {
 /* ---------- Header ---------- */
 .blog-header {
   position: sticky;
-  top: 0;
+  top: 16px;
   z-index: 100;
-  height: 64px;
   padding: 0;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  background: transparent;
   display: flex;
-  align-items: center;
+  justify-content: center;
 }
 
 .header-inner {
   width: 100%;
   max-width: v-bind(contentMaxWidth + 'px');
-  margin: 0 auto;
   padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 64px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
 }
 
 .header-left,
@@ -151,6 +154,8 @@ withDefaults(defineProps<Props>(), {
   flex-shrink: 0;
   position: sticky;
   top: 88px;
+  /* 桌面端保持在左侧（即使 DOM 中 main 在前） */
+  order: -1;
 }
 
 /* ---------- Main ---------- */
@@ -175,13 +180,34 @@ withDefaults(defineProps<Props>(), {
 
 /* ---------- Responsive ---------- */
 @media (max-width: 768px) {
+  .blog-content {
+    overflow-x: hidden;
+  }
+
   .content-wrapper {
     flex-direction: column;
+    gap: 12px;
+  }
+
+  .blog-main {
+    max-width: 100%;
   }
 
   .blog-sidebar {
     width: 100% !important;
     position: static;
+    order: 0;
+    max-width: 100%;
+  }
+
+  .blog-header {
+    top: 8px;
+  }
+
+  .header-inner {
+    padding: 0 12px;
+    min-height: 56px;
+    height: auto;
   }
 }
 </style>
