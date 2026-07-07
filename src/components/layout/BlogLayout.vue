@@ -37,6 +37,11 @@ withDefaults(defineProps<Props>(), {
     <!-- 主体内容区 -->
     <main class="blog-content">
       <div class="content-wrapper" :style="{ maxWidth: contentMaxWidth + 'px' }">
+        <!-- 主内容区（卡片容器）—— 内容优先，排在 sidebar 前面 -->
+        <section class="blog-main">
+          <slot />
+        </section>
+
         <!-- 侧边栏（卡片组） -->
         <aside
           v-if="showSidebar"
@@ -45,11 +50,6 @@ withDefaults(defineProps<Props>(), {
         >
           <slot name="sidebar" />
         </aside>
-
-        <!-- 主内容区（卡片容器） -->
-        <section class="blog-main">
-          <slot />
-        </section>
       </div>
     </main>
 
@@ -133,6 +133,8 @@ withDefaults(defineProps<Props>(), {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  /* 桌面端排在左侧（即使 DOM 中 main 在前） */
+  order: -1;
 }
 
 /* ---------- Main ---------- */
@@ -170,6 +172,7 @@ withDefaults(defineProps<Props>(), {
 @media (max-width: 768px) {
   .blog-content {
     padding: 12px 8px;
+    overflow-x: hidden;
   }
 
   .content-wrapper {
@@ -177,13 +180,21 @@ withDefaults(defineProps<Props>(), {
     gap: 12px;
   }
 
+  .blog-main,
+  .blog-sidebar {
+    max-width: 100%;
+  }
+
   .blog-sidebar {
     width: 100% !important;
     position: static;
+    order: 0;
   }
 
   .header-inner {
     padding: 0 12px;
+    min-height: 64px;
+    height: auto;
   }
 }
 </style>

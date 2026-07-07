@@ -161,6 +161,9 @@ const emit = defineEmits<{
 }
 
 @media (max-width: 768px) {
+  .article-card {
+    margin-bottom: 10px;
+  }
   .article-content {
     flex-direction: column;
   }
@@ -174,9 +177,6 @@ const emit = defineEmits<{
   .article-summary {
     font-size: 13px;
     -webkit-line-clamp: 2;
-  }
-  .article-card {
-    margin-bottom: 10px;
   }
 }
 </style>

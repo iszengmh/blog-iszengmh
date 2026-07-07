@@ -127,4 +127,15 @@ function onPageChange(page: number) {
 .load-more-btn {
   margin-top: 16px;
 }
+
+@media (max-width: 768px) {
+  .pagination-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+  }
+  .pagination-wrapper :deep(.ant-pagination-options) {
+    display: none;
+  }
+}
 </style>

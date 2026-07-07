@@ -73,6 +73,12 @@ watch(()=>props.id, (id) => {
   align-items: center;
   min-height: 40vh;
 }
+
+@media (max-width: 768px) {
+  .article-viewer {
+    padding: 12px;
+  }
+}
 </style>
 
 <style>
@@ -103,4 +109,19 @@ watch(()=>props.id, (id) => {
 .markdown-body a { color: #1890ff; }
 .markdown-body ul, .markdown-body ol { padding-left: 2em; line-height: 1.8; }
 .markdown-body hr { margin: 2em 0; border: none; border-top: 1px solid #e8e8e8; }
+
+@media (max-width: 768px) {
+  .markdown-body {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  .markdown-body table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .markdown-body pre {
+    max-width: 100%;
+  }
+}
 </style>

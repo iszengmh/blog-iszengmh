@@ -78,6 +78,13 @@ const emit = defineEmits<{
   gap: 24px;
 }
 
+@media (max-width: 768px) {
+  .header-container {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
 .header-left {
   flex-shrink: 0;
 }

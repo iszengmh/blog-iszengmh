@@ -15,7 +15,8 @@ import ArticleViewer from './components/views/ArticleViewer.vue'
 import Archives from './components/Archives.vue'
 import About from './components/About.vue'
 import { useArticles } from './composables/useArticles'
-import { menuItems } from './config.ts'
+import { menuItems,profile } from './config.ts'
+
 
 const route = useRoute()
 const router = useRouter()
@@ -48,7 +49,7 @@ watch(() => route.path, () => {
   activeTag.value = ''
   currentPage.value = 1
 
-  // 手机端进入文章时，滚动到内容区（让标签云在顶部显示）
+  // 手机端进入文章时，滚动到内容区（内容优先，main 在前）
   if (window.innerWidth < 768 && route.path !== '/') {
     nextTick(() => {
       const mainEl = document.querySelector('.blog-main')
@@ -142,7 +143,7 @@ function handleMenuClick(event: any) {
   <BlogLayout>
     <template #header>
       <BlogHeader
-        title="iszengmh 的博客"
+        :title="profile.name+'的博客'"
         :menu-items="menuItems"
         :active-key="pageType === 'home' ? 'home' : route.path"
         @menu-click="handleMenuClick"
