@@ -62,8 +62,6 @@ watch(()=>props.id, (id) => {
 
 <style scoped>
 .article-viewer {
-  max-width: 800px;
-  margin: 0 auto;
   padding: 24px;
   background: #fff;
   border-radius: 8px;

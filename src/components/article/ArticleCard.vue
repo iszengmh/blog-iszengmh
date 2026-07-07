@@ -166,7 +166,17 @@ const emit = defineEmits<{
   }
   .article-cover {
     width: 100%;
-    height: 180px;
+    height: 140px;
+  }
+  .article-title {
+    font-size: 17px;
+  }
+  .article-summary {
+    font-size: 13px;
+    -webkit-line-clamp: 2;
+  }
+  .article-card {
+    margin-bottom: 10px;
   }
 }
 </style>

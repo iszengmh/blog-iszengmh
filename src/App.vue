@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import BlogLayout from './components/layout/BlogLayout.vue'
 import BlogHeader from './components/Header.vue'
@@ -47,6 +47,17 @@ watch(() => route.path, () => {
   activeCategory.value = ''
   activeTag.value = ''
   currentPage.value = 1
+
+  // 手机端进入文章时，滚动到内容区（让标签云在顶部显示）
+  if (window.innerWidth < 768 && route.path !== '/') {
+    nextTick(() => {
+      const mainEl = document.querySelector('.blog-main')
+      if (mainEl) {
+        mainEl.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        window.scrollBy(0, -16)
+      }
+    })
+  }
 })
 
 const currentPage = ref(1)

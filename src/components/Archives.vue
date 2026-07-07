@@ -28,7 +28,7 @@ const emit = defineEmits<{
           class="archive-item"
           @click="emit('article-click', article)"
         >
-          <span class="archive-date">{{ article.date }}</span>
+          <span class="archive-date">{{ article.date.slice(0,10) }}</span>
           <span class="archive-title">{{ article.title }}</span>
         </div>
       </div>
@@ -38,9 +38,6 @@ const emit = defineEmits<{
 
 <style scoped>
 .archives-page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 24px;
   min-height: 60vh;
 }
 
