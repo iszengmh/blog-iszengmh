@@ -1,4 +1,23 @@
 <script setup lang="ts">
+/**
+ * 博客整体布局组件
+ *
+ * 使用 Ant Design Layout 实现的标准博客布局：
+ ┌──────────────────────────────┐
+ │          Header              │
+ ├──────────┬───────────────────┤
+ │          │                   │
+ │  Sidebar │    Content       │
+ │  (头像/   │   (文章列表)       │
+ │   分类/   │                   │
+ │   标签)   │                   │
+ │          │                   │
+ ├──────────┴───────────────────┤
+ │          Footer              │
+ └──────────────────────────────┘
+ *
+ * 移动端：内容优先，sidebar 排在 main 下方
+ */
 defineOptions({ name: 'BlogLayout' })
 
 interface Props {
@@ -15,9 +34,9 @@ withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <div class="blog-layout">
-    <!-- 顶部导航栏（全宽，白色卡片效果） -->
-    <header class="blog-header">
+  <a-layout class="blog-layout">
+    <!-- 顶部导航栏 -->
+    <a-layout-header class="blog-header">
       <div class="header-inner" :style="{ maxWidth: contentMaxWidth + 'px' }">
         <slot name="header">
           <div class="header-left">
@@ -32,17 +51,17 @@ withDefaults(defineProps<Props>(), {
           </div>
         </slot>
       </div>
-    </header>
+    </a-layout-header>
 
     <!-- 主体内容区 -->
     <main class="blog-content">
       <div class="content-wrapper" :style="{ maxWidth: contentMaxWidth + 'px' }">
-        <!-- 主内容区（卡片容器）—— 内容优先，排在 sidebar 前面 -->
-        <section class="blog-main">
+        <!-- 主内容区（内容优先，DOM 排在 sidebar 前面） -->
+        <main class="blog-main">
           <slot />
-        </section>
+        </main>
 
-        <!-- 侧边栏（卡片组） -->
+        <!-- 侧边栏 -->
         <aside
           v-if="showSidebar"
           class="blog-sidebar"
@@ -62,7 +81,7 @@ withDefaults(defineProps<Props>(), {
         </slot>
       </div>
     </footer>
-  </div>
+  </a-layout>
 </template>
 
 <style scoped>
@@ -76,22 +95,26 @@ withDefaults(defineProps<Props>(), {
 /* ---------- Header ---------- */
 .blog-header {
   position: sticky;
-  top: 0;
+  top: 16px;
   z-index: 100;
-  width: 100%;
-  background: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  padding: 0;
+  background: transparent;
   display: flex;
   justify-content: center;
 }
 
 .header-inner {
   width: 100%;
+  max-width: v-bind(contentMaxWidth + 'px');
   padding: 0 24px;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  height: 64px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
 }
 
 .header-left,
@@ -130,10 +153,7 @@ withDefaults(defineProps<Props>(), {
   flex-shrink: 0;
   position: sticky;
   top: 88px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  /* 桌面端排在左侧（即使 DOM 中 main 在前） */
+  /* 桌面端保持在左侧（即使 DOM 中 main 在前） */
   order: -1;
 }
 
@@ -171,7 +191,6 @@ withDefaults(defineProps<Props>(), {
 /* ---------- Responsive ---------- */
 @media (max-width: 768px) {
   .blog-content {
-    padding: 12px 8px;
     overflow-x: hidden;
   }
 
@@ -180,8 +199,7 @@ withDefaults(defineProps<Props>(), {
     gap: 12px;
   }
 
-  .blog-main,
-  .blog-sidebar {
+  .blog-main {
     max-width: 100%;
   }
 
@@ -189,11 +207,16 @@ withDefaults(defineProps<Props>(), {
     width: 100% !important;
     position: static;
     order: 0;
+    max-width: 100%;
+  }
+
+  .blog-header {
+    top: 8px;
   }
 
   .header-inner {
     padding: 0 12px;
-    min-height: 64px;
+    min-height: 56px;
     height: auto;
   }
 }

@@ -1,17 +1,17 @@
 <script setup lang="ts">
 /**
- * 归档页面
- * 展示所有文章的归档列表（按年份/月份分组）
+ * 归档页
  */
-import type { Article } from './article/ArticleCard.vue'
+import { useRouter } from 'vue-router'
+import { useArticleFilter } from '../composables/useArticleFilter'
+import type { Article } from '../components/article/ArticleCard.vue'
 
-defineProps<{
-  articles: Article[]
-}>()
+const router = useRouter()
+const { articleCards } = useArticleFilter()
 
-const emit = defineEmits<{
-  'article-click': [article: Article]
-}>()
+function handleArticleClick(article: Article) {
+  router.push(`/${article.id}`)
+}
 </script>
 
 <template>
@@ -20,15 +20,15 @@ const emit = defineEmits<{
       <template #title>
         <h2 style="margin: 0">归档</h2>
       </template>
-      <p>共 {{ articles.length }} 篇文章</p>
+      <p>共 {{ articleCards.length }} 篇文章</p>
       <div class="archives-list">
         <div
-          v-for="article in articles"
+          v-for="article in articleCards"
           :key="article.id"
           class="archive-item"
-          @click="emit('article-click', article)"
+          @click="handleArticleClick(article)"
         >
-          <span class="archive-date">{{ article.date.slice(0,10) }}</span>
+          <span class="archive-date">{{ article.date.slice(0, 10) }}</span>
           <span class="archive-title">{{ article.title }}</span>
         </div>
       </div>
@@ -40,13 +40,11 @@ const emit = defineEmits<{
 .archives-page {
   min-height: 60vh;
 }
-
 .archives-list {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-
 .archive-item {
   display: flex;
   gap: 16px;
@@ -55,23 +53,19 @@ const emit = defineEmits<{
   cursor: pointer;
   transition: background 0.2s;
 }
-
 .archive-item:hover {
   background: #f0f5ff;
 }
-
 .archive-date {
   flex-shrink: 0;
   color: #999;
   font-size: 14px;
   font-family: monospace;
 }
-
 .archive-title {
   color: #1a1a1a;
   font-size: 15px;
 }
-
 .archive-item:hover .archive-title {
   color: #1890ff;
 }
