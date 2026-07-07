@@ -25,7 +25,7 @@ interface Props {
 
 const props=withDefaults(defineProps<Props>(), profile)
 
-
+console.log("profile.avatar",profile.avatar)
 /** 图标字符串到组件引用的映射 */
 const iconMap: Record<string, any> = {
   GithubOutlined,

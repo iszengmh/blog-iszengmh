@@ -7,6 +7,7 @@
  */
 import { ref, watch } from 'vue'
 import { Marked } from 'marked'
+import { markdownImageSuffix, postAddress } from '../../config'
 
 const props = defineProps<{ id: string }>()
 
@@ -18,6 +19,18 @@ const marked = new Marked({
   breaks: true,
   gfm: true,
 })
+
+/** 自定义渲染器：将相对图片路径补全为完整 URL */
+const renderer = {
+  image({ href, title, text }: { href: string; title: string | null; text: string }) {
+    const src = href.startsWith(markdownImageSuffix) ? postAddress + href : href
+    const alt = text ? ` alt="${text}"` : ''
+    const tit = title ? ` title="${title}"` : ''
+    return `<img src="${src}"${alt}${tit} style="max-width:100%">`
+  },
+}
+
+marked.use({ renderer })
 
 async function loadArticle(id: string) {
   loading.value = true
