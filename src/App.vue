@@ -165,6 +165,7 @@ function handleMenuClick(event: any) {
       </BlogHeader>
     </template>
 
+    
     <template #sidebar>
       <AuthorAvatar />
       <ArticleCategories
