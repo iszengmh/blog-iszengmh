@@ -6,7 +6,7 @@
  *
  * 生产环境：图片部署在 https://iszengmh.pages.dev/posts/ 下。
  */
-export const postAddress = import.meta.env.DEV?'/src/posts/':import.meta.env.VITE_WEB_ADDRESS + 'posts/';
+export const postAddress = import.meta.env.VITE_WEB_ADDRESS?import.meta.env.VITE_WEB_ADDRESS + 'posts/':'/src/posts/';
 
 /*
 markdown本地地址的相对路径，例如你的图片地址是![](assets/images/2025-09-15-12-00-37.png)，
@@ -14,7 +14,8 @@ markdown本地地址的相对路径，例如你的图片地址是![](assets/imag
 * */
 export const markdownImageSuffix="assets/images/";
 
-export const assetsAddress = import.meta.env.DEV?'/src/assets/':import.meta.env.VITE_WEB_ADDRESS + 'assets/';
+//开发环境没有VITE_WEB_ADDRESS这个变量，使用/src/前缀
+export const assetsAddress = import.meta.env.VITE_WEB_ADDRESS?import.meta.env.VITE_WEB_ADDRESS + 'assets/':'/src/assets/';
 export const profile={
     avatar: `${assetsAddress}/avatar.svg`,
         name: 'Rise Zeng',
