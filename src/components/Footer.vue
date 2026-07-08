@@ -25,12 +25,6 @@ withDefaults(defineProps<Props>(), {
 <template>
   <div class="footer-content">
     <slot name="content">
-      <div class="footer-links">
-        <a href="#">关于我们</a>
-        <a href="#">隐私政策</a>
-        <a href="#">友情链接</a>
-        <a href="#">联系我们</a>
-      </div>
       <div class="footer-copyright">
         <p>© {{ year }} {{ siteName }}. All rights reserved.</p>
         <p v-if="icp" class="footer-icp">{{ icp }}</p>

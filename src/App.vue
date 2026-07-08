@@ -83,8 +83,7 @@ function handleMenuClick(event: any) {
     <template #footer>
       <BlogFooter
         :site-name="profile.name+' 的博客'"
-        :year="2026"
-        :extra="['用 ❤️ 和 Vue 构建']"
+        :year="2025"
       />
     </template>
   </BlogLayout>
